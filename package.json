@@ -1,0 +1,21 @@
+{
+  "name": "mern-deployment-assignment",
+  "version": "1.0.0",
+  "description": "MERN Stack Application with DevOps Deployment",
+  "author": "Felix M Muriithi",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "test": "cd backend && npm test && cd ../frontend && npm test",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["mern", "deployment", "devops", "react", "express", "mongodb"],
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 

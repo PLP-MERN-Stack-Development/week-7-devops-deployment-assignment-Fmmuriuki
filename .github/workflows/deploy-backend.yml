@@ -1,0 +1,44 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to Render
+      env:
+        RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
+        RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+      run: |
+        # Install Render CLI
+        curl -sL https://render.com/download-cli/linux | bash
+        
+        # Deploy to Render
+        render deploy --service-id $RENDER_SERVICE_ID --token $RENDER_TOKEN
+
+    - name: Health Check
+      run: |
+        # Wait for deployment to complete
+        sleep 30
+        
+        # Check if the service is healthy
+        curl -f ${{ secrets.BACKEND_URL }}/api/health || exit 1
+
+    - name: Notify Deployment Status
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "✅ Backend deployment successful"
+        else
+          echo "❌ Backend deployment failed"
+        fi 
